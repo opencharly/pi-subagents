@@ -7229,7 +7229,7 @@ describe("single sync execution", { skip: !available ? "pi packages not availabl
 		assert.match(readCallArgs().join("\n"), new RegExp(sentinel));
 		assert.equal(metadata.launchContractDigest, result.launchContractDigest);
 		assert.equal(result.launchResolvedExtensions?.source, "launch-resolved");
-		assert.equal(result.launchResolvedExtensions?.disableAmbientExtensions, true);
+		assert.equal(result.launchResolvedExtensions?.disableAmbientExtensions, false);
 		assert.deepEqual(metadata.launchResolvedExtensions, result.launchResolvedExtensions);
 		assert.deepEqual(result.runtimeAcknowledgedExtensions, { version: 1, source: "child-runtime", ids: ["ext.ok"], omitted: 0 });
 		assert.deepEqual(metadata.runtimeAcknowledgedExtensions, result.runtimeAcknowledgedExtensions);

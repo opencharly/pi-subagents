@@ -794,7 +794,7 @@ describe("async execution utilities", { skip: !available ? "pi packages not avai
 		assert.equal(status.launchContractDigest, launch.details.launchContractDigest);
 		assert.equal(status.steps?.[0]?.launchContractDigest, launch.details.launchContractDigest);
 		assert.equal(launch.details.launchResolvedExtensions?.source, "launch-resolved");
-		assert.equal(launch.details.launchResolvedExtensions?.disableAmbientExtensions, true);
+		assert.equal(launch.details.launchResolvedExtensions?.disableAmbientExtensions, false);
 		assert.deepEqual(payload.launchResolvedExtensions, launch.details.launchResolvedExtensions);
 		assert.deepEqual(payload.results[0]?.launchResolvedExtensions, launch.details.launchResolvedExtensions);
 		assert.deepEqual(status.launchResolvedExtensions, launch.details.launchResolvedExtensions);

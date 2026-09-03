@@ -581,17 +581,16 @@ export function resolvePiLaunchToolPlan(
 		...(fanoutAuthorized ? [FANOUT_CHILD_EXTENSION_PATH] : []),
 		...(permSystemExt ? [permSystemExt] : []),
 	];
-	const disableAmbientExtensions =
-		capabilityCeiling?.denyExtensions === true ||
-		input.extensions !== undefined;
+	const disableAmbientExtensions = capabilityCeiling?.denyExtensions === true;
 	const warnings: string[] = [];
-	// An explicit empty list disables ambient extensions, including model providers.
+	// An explicit extensions list ADDS to the ambient extensions (including
+	// model providers); it no longer disables them. Only a capability ceiling
+	// that denies extensions disables ambient loading.
 	if (capabilityCeiling?.denyExtensions !== true && Array.isArray(input.extensions) && input.extensions.length === 0) {
 		const agentLabel = input.agentName ? ` for agent '${input.agentName}'` : "";
 		warnings.push(
-			`extensions: [] override${agentLabel} disables ALL ambient extensions for this child (not just "adds nothing"), `
-				+ "including any model-provider extension needed to resolve a provider-qualified model. "
-				+ "List the extensions this child actually needs instead of an empty array.",
+			`extensions: [] adds nothing${agentLabel}; ambient extensions (including model providers) still load. `
+				+ "List only the extensions this child needs in addition to the ambient set.",
 		);
 	}
 	const configuredExtensions = capabilityCeiling?.denyExtensions
@@ -607,6 +606,7 @@ export function resolvePiLaunchToolPlan(
 				...new Set([
 					...runtimeExtensions,
 					...toolExtensionPaths,
+					...(input.extensions ?? []),
 					...(input.subagentOnlyExtensions ?? []),
 				]),
 			];

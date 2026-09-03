@@ -797,7 +797,7 @@ Project prompt.
 		assert.deepEqual(result.contract.tools.effectiveMcpTools, ["github_search_repositories"]);
 		assert.deepEqual(result.contract.tools.requiredChildTools, ["read", "subagent", "github_search_repositories", "structured_output"]);
 		assert.deepEqual(result.contract.tools.toolExtensionPaths, ["/tmp/tool-ext.ts"]);
-		assert.equal(result.contract.tools.disableAmbientExtensions, true);
+		assert.equal(result.contract.tools.disableAmbientExtensions, false);
 		assert.ok(result.contract.tools.runtimeExtensions.some((extensionPath) => extensionPath.endsWith("subagent-prompt-runtime.ts")));
 		assert.ok(result.contract.tools.runtimeExtensions.some((extensionPath) => extensionPath.endsWith("fanout-child.ts")));
 		assert.ok(result.contract.tools.extensionArgs.includes("/tmp/config-ext.ts"));

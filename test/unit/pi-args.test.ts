@@ -214,10 +214,10 @@ describe("buildPiArgs session wiring", () => {
 				extensions: [],
 				agentName: "quota-reviewer",
 			});
-			assert.equal(plan.disableAmbientExtensions, true);
+			assert.equal(plan.disableAmbientExtensions, false);
 			assert.equal(plan.warnings.length, 1);
-			assert.match(plan.warnings[0]!, /extensions: \[\] override for agent 'quota-reviewer'/);
-			assert.match(plan.warnings[0]!, /disables ALL ambient extensions/);
+			assert.match(plan.warnings[0]!, /extensions: \[\] adds nothing for agent 'quota-reviewer'/);
+			assert.match(plan.warnings[0]!, /ambient extensions \(including model providers\) still load/);
 			assert.deepEqual(warnCalls, []);
 		} finally {
 			console.warn = originalWarn;
@@ -261,7 +261,7 @@ describe("buildPiArgs session wiring", () => {
 
 	it("does not warn when extensions is a non-empty explicit list", () => {
 		const plan = resolvePiLaunchToolPlan({ extensions: ["./tools/provider-ext.ts"] });
-		assert.equal(plan.disableAmbientExtensions, true);
+		assert.equal(plan.disableAmbientExtensions, false);
 		assert.deepEqual(plan.warnings, []);
 	});
 
@@ -286,7 +286,7 @@ describe("buildPiArgs session wiring", () => {
 
 		assert.equal(projection.version, 1);
 		assert.equal(projection.source, "launch-resolved");
-		assert.equal(projection.disableAmbientExtensions, true);
+		assert.equal(projection.disableAmbientExtensions, false);
 		assert.ok(
 			projection.runtime.length >= 1,
 			`expected at least 1 runtime extension, got ${projection.runtime.length}`,
@@ -2068,7 +2068,7 @@ describe("buildPiArgs system prompt mode wiring", () => {
 		const extensionArgs = args.filter(
 			(arg, index) => args[index - 1] === "--extension",
 		);
-		assert.ok(args.includes("--no-extensions"));
+		assert.ok(!args.includes("--no-extensions"));
 		assert.equal(args[args.indexOf("--tools") + 1], "read");
 		assert.ok(extensionArgs.includes("./main-allowed-ext.ts"));
 		assert.ok(extensionArgs.includes("./child-tool.ts"));
@@ -2318,7 +2318,7 @@ describe("buildPiArgs system prompt mode wiring", () => {
 		const extensionArgs = args.filter(
 			(arg, index) => args[index - 1] === "--extension",
 		);
-		assert.ok(args.includes("--no-extensions"));
+		assert.ok(!args.includes("--no-extensions"));
 		assert.equal(env[SUBAGENT_FANOUT_CHILD_ENV], "1");
 		assert.ok(
 			extensionArgs.some((arg) =>
