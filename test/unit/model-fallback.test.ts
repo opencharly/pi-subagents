@@ -25,6 +25,22 @@ describe("model fallback helpers", () => {
 		{ provider: "anthropic", id: "claude-sonnet-4", fullId: "anthropic/claude-sonnet-4" },
 	];
 
+	it("keeps a provider-qualified id the registry lacks (stale snapshot)", () => {
+		// The primary model goes through the REQUIRED resolver: a provider-qualified
+		// id missing from the registry snapshot (a session-start view that can lag
+		// `pi update --models`) must pass through raw — pi-core resolves it at
+		// launch (a fresh `pi -p` proves the model exists in the current catalog).
+		const candidates = buildModelCandidates("ollama-cloud/deepseek-v4-flash", undefined, availableModels, undefined, {});
+		assert.deepEqual(candidates, ["ollama-cloud/deepseek-v4-flash"]);
+	});
+
+	it("still refuses a bare unregistered model when a registry is present", () => {
+		assert.throws(
+			() => buildModelCandidates("not-a-real-model", undefined, availableModels, undefined, {}),
+			/Unknown subagent model/,
+		);
+	});
+
 	it("keeps explicit provider/model ids unchanged", () => {
 		assert.equal(resolveModelCandidate("openai/gpt-5-mini", availableModels), "openai/gpt-5-mini");
 	});
