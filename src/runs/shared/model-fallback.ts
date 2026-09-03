@@ -214,7 +214,14 @@ function resolveSubagentModelCandidate(
 	if (resolvedWhole) return resolvedWhole;
 	const { baseModel, thinkingSuffix } = splitThinkingSuffix(model);
 	const resolvedBase = thinkingSuffix ? resolveBaseModelCandidate(baseModel, availableModels, preferredProvider) : undefined;
-	return resolvedBase ? `${resolvedBase}${thinkingSuffix}` : undefined;
+	if (resolvedBase) return `${resolvedBase}${thinkingSuffix}`;
+	// A PROVIDER-QUALIFIED id the registry snapshot misses is an explicit caller
+	// choice: the snapshot (captured at session start) can lag `pi update
+	// --models`, so an ollama-cloud model added to the catalog mid-session is
+	// absent here while pi-core resolves it fine at launch (a fresh `pi -p`
+	// proves it). Pass it through raw instead of hard-failing on a stale view.
+	if (baseModel.includes("/")) return baseModel + (thinkingSuffix ?? "");
+	return undefined;
 }
 
 function suggestAlternateProviderModel(
